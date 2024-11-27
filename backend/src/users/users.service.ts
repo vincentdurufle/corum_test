@@ -9,11 +9,11 @@ import { PrismaService } from '../prisma';
 import { User } from '@prisma/client';
 
 @Injectable()
-export class UserService {
-  constructor(private prismaService: PrismaService) {}
+export class UsersService {
+  constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const alreadyExists = await this.prismaService.user.findUnique({
+    const alreadyExists = await this.prisma.user.findUnique({
       where: {
         email: createUserDto.email,
       },
@@ -23,14 +23,14 @@ export class UserService {
       throw new BadRequestException('User already exists');
     }
 
-    return this.prismaService.user.create({
+    return this.prisma.user.create({
       data: createUserDto,
     });
   }
 
   findAll() {
     // TODO Pagination
-    return this.prismaService.user.findMany();
+    return this.prisma.user.findMany();
   }
 
   async findOne(id: number): Promise<User> {
@@ -41,10 +41,18 @@ export class UserService {
     return user;
   }
 
+  findOneByEmail(email: string): Promise<User> {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     await this.#getUser(id);
 
-    return this.prismaService.user.update({
+    return this.prisma.user.update({
       where: {
         id,
       },
@@ -53,7 +61,7 @@ export class UserService {
   }
 
   async remove(id: number): Promise<User | null> {
-    const user = await this.prismaService.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id,
       },
@@ -63,7 +71,7 @@ export class UserService {
       return null;
     }
 
-    return this.prismaService.user.delete({
+    return this.prisma.user.delete({
       where: {
         id,
       },
@@ -71,7 +79,7 @@ export class UserService {
   }
 
   async #getUser(id: number): Promise<User> {
-    const user = await this.prismaService.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id,
       },
