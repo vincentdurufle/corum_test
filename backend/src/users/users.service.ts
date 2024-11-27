@@ -1,3 +1,4 @@
+import * as argon from 'argon2';
 import {
   BadRequestException,
   Injectable,
@@ -12,7 +13,7 @@ import { User } from '@prisma/client';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const alreadyExists = await this.prisma.user.findUnique({
       where: {
         email: createUserDto.email,
@@ -23,8 +24,13 @@ export class UsersService {
       throw new BadRequestException('User already exists');
     }
 
+    const hashedPassword = await this.#hashPassword(createUserDto.password);
+
     return this.prisma.user.create({
-      data: createUserDto,
+      data: {
+        ...createUserDto,
+        password: hashedPassword,
+      },
     });
   }
 
@@ -33,7 +39,7 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<Omit<User, 'password'>> {
     const user = await this.#getUser(id);
 
     delete user.password;
@@ -49,15 +55,30 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Omit<User, 'password'>> {
     await this.#getUser(id);
+    let hashedPassword: string | undefined;
 
-    return this.prisma.user.update({
+    if (updateUserDto.password) {
+      hashedPassword = await this.#hashPassword(updateUserDto.password);
+    }
+
+    const response = await this.prisma.user.update({
       where: {
         id,
       },
-      data: updateUserDto,
+      data: {
+        ...updateUserDto,
+        password: hashedPassword,
+      },
     });
+
+    delete response.password;
+
+    return response;
   }
 
   async remove(id: number): Promise<User | null> {
@@ -90,5 +111,9 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  #hashPassword(password: string): Promise<string> {
+    return argon.hash(password);
   }
 }

@@ -18,7 +18,9 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<Omit<User, 'password'>> {
     return this.userService.create(createUserDto);
   }
 
@@ -28,7 +30,9 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Omit<User, 'password'>> {
     return this.userService.findOne(id);
   }
 
@@ -36,8 +40,8 @@ export class UsersController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.userService.update(+id, updateUserDto);
+  ): Promise<Omit<User, 'password'>> {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
