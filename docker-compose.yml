@@ -26,6 +26,14 @@ services:
     networks:
       - backend-network
 
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - '8080:8080'
+
 volumes:
   postgres-data:
 
