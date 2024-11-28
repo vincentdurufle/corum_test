@@ -19,7 +19,7 @@ export class CreateUserDto {
   lastName: string;
 
   @IsString()
-  @MinLength(3)
+  @MinLength(6)
   @MaxLength(255)
   password: string;
 

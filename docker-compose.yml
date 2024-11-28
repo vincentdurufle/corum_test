@@ -25,6 +25,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - backend-network
+      - app-network
 
   frontend:
     build:
@@ -33,10 +34,14 @@ services:
       - ./frontend:/app
     ports:
       - '8080:8080'
+    networks:
+      - app-network
 
 volumes:
   postgres-data:
 
 networks:
   backend-network:
+    driver: bridge
+  app-network:
     driver: bridge
