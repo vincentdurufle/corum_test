@@ -35,8 +35,15 @@ export class UsersService {
   }
 
   findAll() {
-    // TODO Pagination
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        birthdate: true,
+        firstName: true,
+        lastName: true,
+      },
+    });
   }
 
   async findOne(id: number): Promise<Omit<User, 'password'>> {
