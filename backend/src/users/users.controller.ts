@@ -13,18 +13,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
 import { Public } from '../common/decorators';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConflictResponse,
+} from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
-
-  @Public()
-  @Post()
-  create(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<Omit<User, 'password'>> {
-    return this.userService.create(createUserDto);
-  }
 
   @Get()
   findAll() {
@@ -38,6 +37,29 @@ export class UsersController {
     return this.userService.findOne(id);
   }
 
+  @Public()
+  @ApiBadRequestResponse({ description: 'Body does not meet requirements' })
+  @ApiConflictResponse({ description: 'Email already exists' })
+  @Post()
+  create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<Omit<User, 'password'>> {
+    return this.userService.create(createUserDto);
+  }
+
+  @ApiBadRequestResponse({ description: 'Body does not meet requirements' })
+  @ApiConflictResponse({ description: 'Email already exists' })
+  @ApiBody({
+    description: 'Credentials for login',
+    type: UpdateUserDto,
+    examples: {
+      basic: {
+        value: {
+          firstName: 'John',
+        },
+      },
+    },
+  })
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
