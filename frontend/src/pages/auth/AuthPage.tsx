@@ -19,6 +19,7 @@ import { httpClient } from '@/lib';
 import { useSetRecoilState } from 'recoil';
 import { currentUserStore } from '@/stores/User.store.ts';
 import { getUserByAccessToken, setCookie } from '@/utils';
+import corumLogo from '@/assets/corum_logo.png';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,53 +58,58 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 shadow border border-primary rounded p-4 hover:shadow-md transition"
-        >
-          <h1 className="font-medium">Login</h1>
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button disabled={isLoading} type="submit">
-            {isLoading && <Loader2 className="animate-spin" />}
-            Submit
-          </Button>
-        </form>
-      </Form>
+    <div className="min-h-screen grid grid-cols-2">
+      <div className="flex items-center justify-center">
+        <img src={corumLogo} alt="Corum logo" className="w-1/2" />
+      </div>
+      <div className="bg-primary flex justify-center items-center">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 shadow border border-primary rounded p-4 w-1/2 hover:shadow-md bg-secondary transition"
+          >
+            <h1 className="font-medium">Login</h1>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button disabled={isLoading} type="submit">
+              {isLoading && <Loader2 className="animate-spin" />}
+              Submit
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 };
