@@ -5,3 +5,5 @@ export * from './label.tsx';
 export * from './toast.tsx';
 export * from './toaster.tsx';
 export * from './table.tsx';
+export * from './calendar.tsx';
+export * from './popover.tsx';

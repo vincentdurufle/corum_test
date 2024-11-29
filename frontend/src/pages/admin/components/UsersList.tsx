@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { httpClient } from '@/lib';
 import { Loader2 } from 'lucide-react';
 import { User } from '@/types';
+import { Link } from 'react-router';
 
 const UsersList = () => {
   const { data: users, isPending } = useQuery({
@@ -28,8 +29,13 @@ const UsersList = () => {
   });
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="w-2/3 p-4 m-10 border shadow border-secondary rounded relative">
+    <div className="flex justify-center items-center flex-col p-4">
+      <div className="w-2/3 flex justify-end">
+        <Button size="lg" asChild>
+          <Link to="/users/new">New user</Link>
+        </Button>
+      </div>
+      <div className="w-2/3 p-4 m-4 border shadow border-secondary rounded relative">
         {isPending && (
           <div className="absolute top-0 left-0 z-40 h-full w-full flex justify-center items-center bg-primary/10">
             <Loader2 className="animate-spin" />
@@ -57,7 +63,9 @@ const UsersList = () => {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.birthdate}</TableCell>
                   <TableCell className="flex gap-2 justify-end items-center">
-                    <Button variant="link">Edit</Button>
+                    <Button variant="link" asChild>
+                      <Link to={`/users/${user.id}`}>Edit</Link>
+                    </Button>
                     <Button size="sm" variant="destructive">
                       Delete
                     </Button>
