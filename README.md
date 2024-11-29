@@ -6,14 +6,23 @@
 
 ## Installation
 
-Make a .env file at the root of the project with the following variables
+Make .env files with the following variables
 
+Root
 ```dotenv
 POSTGRES_USER: ''
 POSTGRES_PASSWORD: ''
 POSTGRES_DB: ''
 ```
-
+Frontend
+```dotenv
+VITE_API_HOST=''
+```
+Backend
+```dotenv
+DATABASE_URL=''
+JWT_SECRET_KEY=''
+```
 Make sure you have docker and compose installed and launch the containers like so:
 
 ```sh
