@@ -7,6 +7,8 @@ import AdminPage from '@/pages/admin/AdminPage.tsx';
 import { Loader2 } from 'lucide-react';
 import { getCookie, getUserByAccessToken } from '@/utils';
 import AppLayout from '@/components/layouts/AppLayout.tsx';
+import EditUserPage from '@/pages/admin/pages/edit/EditUserPage.tsx';
+import NewUserPage from '@/pages/admin/pages/new/NewUserPage.tsx';
 
 const AppRoutes = () => {
   const [user, setUser] = useRecoilState(currentUserStore);
@@ -56,7 +58,11 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        <Route path="/" element={<AdminPage />} />
+        <Route path="/" element={<AdminPage />}></Route>
+        <Route path="/users">
+          <Route path=":userId" element={<EditUserPage />} />
+          <Route path="new" element={<NewUserPage />} />
+        </Route>
       </Route>
     </Routes>
   );
