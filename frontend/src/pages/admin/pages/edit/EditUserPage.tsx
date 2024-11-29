@@ -16,7 +16,11 @@ const EditUserPage = () => {
   });
 
   if (userQuery.isPending) {
-    return <Loader2 className="animate-spin" />;
+    return (
+      <div className="flex justify-center items-center flex-col min-h-screen">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   }
 
   if (!userQuery.data) {
