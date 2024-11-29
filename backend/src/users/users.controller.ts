@@ -20,16 +20,17 @@ import {
   ApiConflictResponse,
 } from '@nestjs/swagger';
 
-@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  @ApiBearerAuth()
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -47,6 +48,7 @@ export class UsersController {
     return this.userService.create(createUserDto);
   }
 
+  @ApiBearerAuth()
   @ApiBadRequestResponse({ description: 'Body does not meet requirements' })
   @ApiConflictResponse({ description: 'Email already exists' })
   @ApiBody({
@@ -68,6 +70,7 @@ export class UsersController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(+id);
