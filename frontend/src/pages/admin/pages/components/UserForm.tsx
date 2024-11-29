@@ -80,7 +80,7 @@ const UserForm = ({ user }: UserFormProps) => {
     formMutation.mutate(values);
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
+    <div className="flex justify-center items-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
