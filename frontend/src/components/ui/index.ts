@@ -7,3 +7,6 @@ export * from './toaster.tsx';
 export * from './table.tsx';
 export * from './calendar.tsx';
 export * from './popover.tsx';
+export * from './popover.tsx';
+export * from './alert-dialog.tsx';
+export * from './select.tsx';

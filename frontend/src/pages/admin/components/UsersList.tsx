@@ -1,4 +1,13 @@
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Button,
   Table,
   TableBody,
@@ -8,14 +17,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { httpClient } from '@/lib';
 import { Loader2 } from 'lucide-react';
 import { User } from '@/types';
 import { Link } from 'react-router';
+import { toast } from '@/hooks/use-toast.ts';
+import { isAxiosError } from 'axios';
 
 const UsersList = () => {
-  const { data: users, isPending } = useQuery({
+  const {
+    data: users,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ['userList'],
     queryFn: () => {
       return httpClient.get<User[]>('/users');
@@ -28,6 +43,26 @@ const UsersList = () => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => {
+      return httpClient.delete(`/users/${id}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'User successfully deleted',
+      });
+      refetch();
+    },
+    onError: (error) =>
+      toast({
+        title: 'Error',
+        description: isAxiosError(error)
+          ? error.response?.data?.message
+          : error.message,
+      }),
+  });
+
   return (
     <div className="flex justify-center items-center flex-col p-4">
       <div className="w-2/3 flex justify-end">
@@ -36,7 +71,7 @@ const UsersList = () => {
         </Button>
       </div>
       <div className="w-2/3 p-4 m-4 border shadow border-secondary rounded relative">
-        {isPending && (
+        {(isPending || deleteMutation.isPending) && (
           <div className="absolute top-0 left-0 z-40 h-full w-full flex justify-center items-center bg-primary/10">
             <Loader2 className="animate-spin" />
           </div>
@@ -66,9 +101,30 @@ const UsersList = () => {
                     <Button variant="link" asChild>
                       <Link to={`/users/${user.id}`}>Edit</Link>
                     </Button>
-                    <Button size="sm" variant="destructive">
-                      Delete
-                    </Button>
+                    <AlertDialog>
+                      <Button asChild size="sm" variant="destructive">
+                        <AlertDialogTrigger>Delete</AlertDialogTrigger>
+                      </Button>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete the user.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteMutation.mutate(user.id)}
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
