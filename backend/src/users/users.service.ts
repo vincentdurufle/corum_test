@@ -1,6 +1,6 @@
 import * as argon from 'argon2';
 import {
-  BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -21,7 +21,7 @@ export class UsersService {
     });
 
     if (alreadyExists) {
-      throw new BadRequestException('User already exists');
+      throw new ConflictException('User already exists');
     }
 
     const hashedPassword = await this.#hashPassword(createUserDto.password);
@@ -66,7 +66,20 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<Omit<User, 'password'>> {
-    await this.#getUser(id);
+    const user = await this.#getUser(id);
+
+    if (updateUserDto.email && user.email !== updateUserDto.email) {
+      const alreadyExists = await this.prisma.user.findUnique({
+        where: {
+          email: updateUserDto.email,
+        },
+      });
+
+      if (alreadyExists) {
+        throw new ConflictException('Email already exists');
+      }
+    }
+
     let hashedPassword: string | undefined;
 
     if (updateUserDto.password) {
