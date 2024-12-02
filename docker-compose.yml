@@ -4,6 +4,7 @@ services:
       context: ./backend
     volumes:
       - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - '3000:3000'
     depends_on:
@@ -32,6 +33,7 @@ services:
       context: ./frontend
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     ports:
       - '8080:8080'
     networks:
