@@ -6,13 +6,14 @@ WORKDIR /usr/src/app
 
 # Copy package.json and install dependencies
 COPY package.json package-lock.json ./
+COPY prisma ./prisma/
+
 RUN npm install
 
 # Copy the rest of the application
 COPY . .
 
-# Build the application
-RUN npm run build
+RUN npx prisma generate
 
 # Expose the application port
 EXPOSE 3000
